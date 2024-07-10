@@ -47,7 +47,7 @@ export class PermissionsService implements PermissionsServiceInterface {
     });
   }
 
-  private findPermissionById(permission_id: string): Promise<PermissionEntity> {
+  findPermissionById(permission_id: string): Promise<PermissionEntity> {
     return this.permissionsRepository.findOne({ where: { id: permission_id } });
   }
 }

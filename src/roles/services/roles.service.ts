@@ -67,9 +67,7 @@ export class RolesService implements RolesServiceInterface {
     return this.roleRepository.saveOne(role);
   }
 
-  private findPermissionBy(
-    where: FindOptionsWhere<RoleEntity>,
-  ): Promise<RoleEntity> {
+  findPermissionBy(where: FindOptionsWhere<RoleEntity>): Promise<RoleEntity> {
     return this.roleRepository.findOne({
       where,
       relations: ['has'],

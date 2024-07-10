@@ -31,7 +31,7 @@ export class AuthService {
     return await this.usersService.validate(email, password);
   }
 
-  private async generateJWT(user: UserEntity): Promise<string> {
+  async generateJWT(user: UserEntity): Promise<string> {
     const payload: UserTokenPayload = {
       email: user.email,
       user_id: user.id,
