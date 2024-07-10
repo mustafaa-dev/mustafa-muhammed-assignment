@@ -2,12 +2,10 @@ import { LoggerService } from '@app/services';
 import {
   CallHandler,
   ExecutionContext,
-  HttpException,
-  HttpStatus,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 @Injectable()
@@ -39,7 +37,7 @@ export class LoggingInterceptor implements NestInterceptor {
       tap((response) => {
         const sanitizedRes = {
           status: response.statusCode,
-          data: response.data,
+          data: response,
         };
         this.logger.debug(
           `${handlerName} | Response: ${JSON.stringify(sanitizedRes)} | Took : ${
@@ -52,13 +50,7 @@ export class LoggingInterceptor implements NestInterceptor {
         this.logger.error(`${handlerName} | Error: ${error.message}`, {
           context: `${controllerName} :: Error`,
         });
-        return throwError(
-          () =>
-            new HttpException(
-              'Internal server error',
-              HttpStatus.INTERNAL_SERVER_ERROR,
-            ),
-        );
+        throw error;
       }),
     );
   }

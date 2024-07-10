@@ -2,20 +2,15 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
 import { ConfigService } from '@nestjs/config';
+import { DataSourceOptions } from 'typeorm';
+import { getDataSourceOptions } from '@app/common/modules/database/configs/database-seed.config';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        host: configService.getOrThrow<string>('DB_HOST'),
-        type: 'postgres',
-        port: configService.getOrThrow<number>('DB_PORT'),
-        username: configService.getOrThrow<string>('DB_USERNAME'),
-        password: configService.getOrThrow<string>('DB_PASSWORD'),
-        database: configService.getOrThrow<string>('DB_NAME'),
-        synchronize: configService.getOrThrow<boolean>('DB_SYNCHRONIZE'),
-        autoLoadEntities: true,
-      }),
+      useFactory: async (
+        configService: ConfigService,
+      ): Promise<DataSourceOptions> => getDataSourceOptions(configService),
       inject: [ConfigService],
     }),
   ],

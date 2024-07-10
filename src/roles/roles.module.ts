@@ -18,5 +18,6 @@ import { PermissionsService } from './services/permissions.service';
     RoleRepository,
     PermissionRepository,
   ],
+  exports: [RolesService],
 })
 export class RolesModule {}

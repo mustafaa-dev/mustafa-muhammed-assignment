@@ -9,6 +9,7 @@ import { DatabaseModule } from '@app/common';
 import { AppController } from '@app/controllers';
 import { SwaggerModule } from '@nestjs/swagger';
 import { RolesModule } from '../roles';
+import { NotificationsModule } from '../notifications';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { RolesModule } from '../roles';
     DatabaseModule,
     RolesModule,
     SwaggerModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, LoggerService],

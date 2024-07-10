@@ -79,6 +79,10 @@ export class EnvDto {
   @IsString()
   @IsNotEmpty()
   JWT_EXPIRATION_TIME: string;
+
+  @IsString()
+  @IsNotEmpty()
+  SENDGRID_API_KEY: string;
 }
 
 export function validateEnv(config: Record<string, unknown>) {

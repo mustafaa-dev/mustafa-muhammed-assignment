@@ -6,10 +6,10 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { hash } from 'bcryptjs';
+import { compare, hash } from 'bcryptjs';
+import { AbstractEntity } from '@app/common';
 import { RoleEntity } from '../../roles/entites/role.entity';
 import { TaskEntity } from '@tasks/entites/task.entity';
-import { AbstractEntity } from '@app/common';
 
 @Entity('users')
 export class UserEntity extends AbstractEntity<UserEntity> {
@@ -32,5 +32,9 @@ export class UserEntity extends AbstractEntity<UserEntity> {
   @BeforeInsert()
   async hashPassword() {
     this.password = await hash(this.password, 10);
+  }
+
+  async comparePassword(password: string): Promise<boolean> {
+    return await compare(password, this.password);
   }
 }

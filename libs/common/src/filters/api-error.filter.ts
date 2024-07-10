@@ -6,7 +6,6 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { LoggerService } from '@app/services';
-import { getKeyByValue } from '@app/common/utils';
 
 @Catch()
 export class ApiErrorFilter implements ExceptionFilter {
@@ -18,7 +17,9 @@ export class ApiErrorFilter implements ExceptionFilter {
       env: process.env.NODE_ENV,
       statusCode: err.status,
       timestamp: new Date().toISOString(),
-      message: exception.message,
+      productionMsg: err.message,
+
+      error: exception,
     });
   };
 
@@ -32,11 +33,11 @@ export class ApiErrorFilter implements ExceptionFilter {
   };
   handleDuplicateError = (exception: any, request: any) => {
     const body = request.body;
-    const duplicatedValue = exception.sqlMessage?.split(' ')[2];
-    const duplicatedKey = getKeyByValue(body, duplicatedValue);
 
-    const status = HttpStatus.NOT_ACCEPTABLE;
-    const message = `${duplicatedKey} is already exists`;
+    const status = HttpStatus.CONFLICT;
+    const message = `${exception.driverError.detail.split('(')[1].split(')')[0]} ${
+      exception.driverError.detail.split('=(')[1].split(')')[0]
+    } already exists`;
     return { message, status };
   };
 
@@ -67,7 +68,7 @@ export class ApiErrorFilter implements ExceptionFilter {
       message: 'Internal Server Error',
     };
 
-    if (exception?.driverError?.code === 'ER_DUP_ENTRY') {
+    if (exception?.driverError?.code === '23505') {
       error = this.handleDuplicateError(exception, request);
     } else if (exception instanceof HttpException) {
       error = this.handleHttpError(exception);

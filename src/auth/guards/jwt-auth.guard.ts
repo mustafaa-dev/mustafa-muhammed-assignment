@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 
 @Injectable()
-export class JwtAdminGuard extends AuthGuard('jwt') {
+export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private readonly reflector: Reflector) {
     super();
   }
@@ -20,7 +20,6 @@ export class JwtAdminGuard extends AuthGuard('jwt') {
     if (isPublic) {
       return true;
     }
-
     return super.canActivate(context);
   }
 
