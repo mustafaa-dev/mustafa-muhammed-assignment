@@ -25,8 +25,13 @@ import {
 } from '@auth/decorators/roles-permissions.decorator';
 import { PermissionGuard, RoleGuard } from '@auth/guards/permission.guard';
 import { JwtAuthGuard } from '@auth/guards';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '@auth/decorators/current-user.decorator';
+import { UserEntity } from '@users/entites/user.entity';
 
-@UseGuards(JwtAuthGuard)
+@ApiTags('Tasks')
+@ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('tasks')
 export class TasksController implements TasksControllerInterface {
   constructor(private readonly tasksService: TasksService) {}
@@ -44,6 +49,11 @@ export class TasksController implements TasksControllerInterface {
   }
 
   @Post()
+  @SetRoles([
+    UserRolesEnum.SUPER_ADMIN,
+    UserRolesEnum.ADMIN,
+    UserRolesEnum.LEADER,
+  ])
   @Serialize(GetTaskDto)
   async addOne(@Body() addTaskDto: AddTaskDto): Promise<TaskEntity> {
     return await this.tasksService.addOne(addTaskDto);
@@ -54,8 +64,9 @@ export class TasksController implements TasksControllerInterface {
   async updateOne(
     @Param('id') id: string,
     @Body() updateTaskDto: UpdateTaskDto,
+    @CurrentUser() user: UserEntity,
   ): Promise<TaskEntity> {
-    return await this.tasksService.updateOne(id, updateTaskDto);
+    return await this.tasksService.updateOne(id, updateTaskDto, user);
   }
 
   @Delete(':id')

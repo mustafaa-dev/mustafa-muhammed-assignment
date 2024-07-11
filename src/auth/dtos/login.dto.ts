@@ -14,9 +14,8 @@ export class LoginDto {
 
   @ApiProperty({
     description: 'Password of the user',
-    type: String,
     required: true,
-    example: 'Pa$$word10',
+    example: `Pa$$word10`,
   })
   @IsStrongPassword()
   @IsNotEmpty()

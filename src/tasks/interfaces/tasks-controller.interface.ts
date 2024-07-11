@@ -3,6 +3,7 @@ import { TaskEntity } from '@tasks/entites/task.entity';
 import { AddTaskDto } from '@tasks/dtos/add-task.dto';
 import { UpdateTaskDto } from '@tasks/dtos/update-task.dto';
 import { ISuccessResponse } from '@app/common/modules/database/success.interface';
+import { UserEntity } from '@users/entites/user.entity';
 
 export interface TasksControllerInterface {
   findAll(query: PaginateQuery): Promise<Paginated<TaskEntity>>;
@@ -11,7 +12,11 @@ export interface TasksControllerInterface {
 
   addOne(addTaskDto: AddTaskDto): Promise<TaskEntity>;
 
-  updateOne(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskEntity>;
+  updateOne(
+    id: string,
+    updateTaskDto: UpdateTaskDto,
+    currentUser: UserEntity,
+  ): Promise<TaskEntity>;
 
   deleteOne(id: string): Promise<ISuccessResponse>;
 

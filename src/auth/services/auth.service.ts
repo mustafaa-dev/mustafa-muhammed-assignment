@@ -5,6 +5,7 @@ import { UserEntity } from '@users/entites/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { addDays } from 'date-fns';
+import { RegisterDto } from '@auth/dtos';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,11 @@ export class AuthService {
         parseInt(this.configService.get<string>('JWT_EXPIRATION_TIME')),
       ),
     };
+  }
+
+  async register(registerDto: RegisterDto): Promise<LoginResponseInterface> {
+    const user = await this.usersService.createOne(registerDto);
+    return await this.login(user);
   }
 
   async validateUser(email: string, password: string): Promise<UserEntity> {

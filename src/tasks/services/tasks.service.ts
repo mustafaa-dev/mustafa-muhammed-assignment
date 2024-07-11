@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { TasksServiceInterface } from '@tasks/interfaces/tasks-service.interface';
 import { TaskRepository } from '@tasks/repositories/task.repository';
 import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
@@ -13,6 +13,8 @@ import { UsersService } from '@users/services/users.service';
 import { UserEntity } from '@users/entites/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { NotificationEvents } from '@app/common';
+import { EmailDataInterface } from '../../notifications/interfaces/email-data.interface';
+import { UserRolesEnum } from '@users/enums';
 
 @Injectable()
 export class TasksService implements TasksServiceInterface {
@@ -40,7 +42,21 @@ export class TasksService implements TasksServiceInterface {
   async updateOne(
     id: string,
     updateTaskDto: UpdateTaskDto,
+    currentUser: UserEntity,
   ): Promise<TaskEntity> {
+    const task = await this.getTaskBy({ id });
+    if (
+      currentUser.role.name === UserRolesEnum.USER &&
+      task.owner.id !== currentUser.id
+    )
+      throw new ForbiddenException('You are not allowed to update this task');
+
+    if (updateTaskDto.status === TaskStatus.DONE)
+      this.ee.emit(NotificationEvents.SEND_TASK_COMPLETED_NOTIFICATION, {
+        to: currentUser.email,
+        data: { taskId: id, taskTitle: task.title, userName: currentUser.name },
+      } as EmailDataInterface);
+
     return this.taskRepository.findOneAndUpdate(
       { where: { id } },
       updateTaskDto,

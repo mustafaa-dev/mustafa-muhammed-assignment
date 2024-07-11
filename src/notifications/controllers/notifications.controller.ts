@@ -12,4 +12,9 @@ export class NotificationsController {
   async sendAssignedTaskEmail(data: EmailDataInterface) {
     await this.notificationService.sendAssignedTaskEmail(data);
   }
+
+  @OnEvent(NotificationEvents.SEND_TASK_COMPLETED_NOTIFICATION)
+  async sendCompletedTaskEmail(data: EmailDataInterface) {
+    await this.notificationService.sendCompletedTaskEmail(data);
+  }
 }

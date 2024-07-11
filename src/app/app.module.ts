@@ -10,6 +10,7 @@ import { AppController } from '@app/controllers';
 import { SwaggerModule } from '@nestjs/swagger';
 import { RolesModule } from '../roles';
 import { NotificationsModule } from '../notifications';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -18,6 +19,12 @@ import { NotificationsModule } from '../notifications';
       envFilePath: '.env',
       validate: validateEnv,
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60,
+        limit: 10,
+      },
+    ]),
     AuthModule,
     UsersModule,
     TasksModule,

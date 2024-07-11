@@ -18,7 +18,6 @@ export class RolesService implements RolesServiceInterface {
   ) {}
 
   async findAll(query: PaginateQuery): Promise<Paginated<RoleEntity>> {
-    console.log('query', query);
     const qb = this.roleRepository.createQueryBuilder('role');
     return paginate(query, qb, GetRolesPaginationConfig);
   }

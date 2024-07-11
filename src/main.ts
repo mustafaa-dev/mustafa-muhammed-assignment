@@ -11,7 +11,12 @@ import { ApiErrorFilter, LoggingInterceptor } from '@app/common';
 import { ValidationPipe } from '@nestjs/common';
 
 import { WinstonModule } from 'nest-winston';
+
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+import helmet from 'helmet';
+
+import csp from 'helmet-csp';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,6 +30,15 @@ async function bootstrap() {
   app.useGlobalFilters(new ApiErrorFilter(loggerService));
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
+  app.use(helmet());
+  app.use(
+    csp({
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      },
+    }),
+  );
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Online Tasks API')

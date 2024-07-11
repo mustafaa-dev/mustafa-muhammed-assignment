@@ -4,13 +4,17 @@ import { AddUserDto, UpdateUserDto } from '@users/dtos';
 import { ISuccessResponse } from '@app/common/modules/database/success.interface';
 
 export interface UsersControllerInterface {
-  addOne(addUserDto: AddUserDto): Promise<UserEntity>;
+  addOne(addUserDto: AddUserDto, currentUser: UserEntity): Promise<UserEntity>;
 
   findAll(query: PaginateQuery): Promise<Paginated<UserEntity>>;
 
-  updateOne(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity>;
+  updateOne(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    currenUser: UserEntity,
+  ): Promise<UserEntity>;
 
-  deleteOne(id: string): Promise<ISuccessResponse>;
+  deleteOne(id: string, currenUser: UserEntity): Promise<ISuccessResponse>;
 
   getProfile(currentUser: UserEntity): Promise<UserEntity>;
 

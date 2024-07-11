@@ -12,7 +12,7 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsersService } from '@users/services/users.service';
 import { UsersControllerInterface } from '@users/interfaces';
-import { PaginateQuery } from 'nestjs-paginate';
+import { Paginated, PaginateQuery } from 'nestjs-paginate';
 import { Serialize, SerializePaginated } from '@app/common';
 import { AddUserDto, GetUserDto, UpdateUserDto } from '@users/dtos';
 import { JwtAuthGuard } from '@auth/guards';
@@ -29,6 +29,7 @@ import { UserEntity } from '@users/entites/user.entity';
 @UseGuards(JwtAuthGuard)
 @ApiTags('Users')
 @ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('users')
 export class UsersController implements UsersControllerInterface {
   constructor(private readonly usersService: UsersService) {}
@@ -51,10 +52,9 @@ export class UsersController implements UsersControllerInterface {
   }
 
   @Get()
-  @SetRoles(['admin'])
-  @UseGuards(RoleGuard)
+  @SetRoles([UserRolesEnum.SUPER_ADMIN, UserRolesEnum.ADMIN])
   @SerializePaginated(GetUserDto)
-  async findAll(@Query() query: PaginateQuery) {
+  async findAll(@Query() query: PaginateQuery): Promise<Paginated<UserEntity>> {
     return this.usersService.findAll(query);
   }
 
@@ -62,7 +62,7 @@ export class UsersController implements UsersControllerInterface {
   @Serialize(GetUserDto)
   @SetPermissions(['READ:USER'])
   @UseGuards(PermissionGuard)
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<UserEntity> {
     return this.usersService.findOne(id);
   }
 
@@ -70,8 +70,11 @@ export class UsersController implements UsersControllerInterface {
   @Serialize(GetUserDto)
   @SetRoles([UserRolesEnum.SUPER_ADMIN, UserRolesEnum.ADMIN])
   @UseGuards(RoleGuard)
-  async addOne(@Body() addUserDto: AddUserDto) {
-    return this.usersService.addOne(addUserDto);
+  async addOne(
+    @Body() addUserDto: AddUserDto,
+    @CurrentUser() currentUser: UserEntity,
+  ): Promise<UserEntity> {
+    return this.usersService.addOne(addUserDto, currentUser);
   }
 
   @Patch(':id')
@@ -82,15 +85,19 @@ export class UsersController implements UsersControllerInterface {
   async updateOne(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return this.usersService.updateOne(id, updateUserDto);
+    @CurrentUser() currentUser: UserEntity,
+  ): Promise<UserEntity> {
+    return this.usersService.updateOne(id, updateUserDto, currentUser);
   }
 
   @Delete(':id')
   @SetPermissions(['DELETE:USER'])
   @SetRoles([UserRolesEnum.SUPER_ADMIN, UserRolesEnum.ADMIN])
   @UseGuards(PermissionGuard, RoleGuard)
-  async deleteOne(@Param('id') id: string): Promise<ISuccessResponse> {
-    return await this.usersService.deleteOne(id);
+  async deleteOne(
+    @Param('id') id: string,
+    @CurrentUser() currenUser: UserEntity,
+  ): Promise<ISuccessResponse> {
+    return await this.usersService.deleteOne(id, currenUser);
   }
 }

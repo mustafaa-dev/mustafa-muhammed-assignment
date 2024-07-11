@@ -6,12 +6,18 @@ import { AddTaskDto, UpdateTaskDto } from '@tasks/dtos';
 import { ISuccessResponse } from '@app/common/modules/database/success.interface';
 import { Reflector } from '@nestjs/core';
 import { TasksController } from '@tasks/controllers/tasks.controller';
+import { UserEntity } from '@users/entites/user.entity';
+import { UserRolesEnum } from '@users/enums';
+import { RoleEntity } from '../../roles/entites/role.entity';
 
 const task: TaskEntity = {
   id: '1',
   title: 'Test Task',
   description: 'Task Description',
 } as unknown as TaskEntity;
+
+const user = new UserEntity();
+user.role = { name: UserRolesEnum.SUPER_ADMIN } as unknown as RoleEntity;
 
 describe('TasksController', () => {
   let tasksController: TasksController;
@@ -125,12 +131,17 @@ describe('TasksController', () => {
 
       jest.spyOn(tasksService, 'updateOne').mockResolvedValue(updatedTask);
 
-      const result = await tasksController.updateOne(taskId, updateTaskDto);
+      const result = await tasksController.updateOne(
+        taskId,
+        updateTaskDto,
+        user,
+      );
 
       expect(result).toEqual(updatedTask);
       expect(tasksService.updateOne).toHaveBeenCalledWith(
         taskId,
         updateTaskDto,
+        user,
       );
     });
   });

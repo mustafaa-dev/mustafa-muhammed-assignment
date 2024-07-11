@@ -6,4 +6,5 @@ export interface EmailDataInterface {
 interface AssignedTaskEmailData {
   taskId: string;
   taskTitle: string;
+  userName?: string;
 }

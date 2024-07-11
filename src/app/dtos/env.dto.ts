@@ -1,6 +1,7 @@
 import { ValidationError } from '@nestjs/common';
 import {
   IsBoolean,
+  IsEmail,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -83,6 +84,10 @@ export class EnvDto {
   @IsString()
   @IsNotEmpty()
   SENDGRID_API_KEY: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  MANAGER_EMAIL: string;
 }
 
 export function validateEnv(config: Record<string, unknown>) {

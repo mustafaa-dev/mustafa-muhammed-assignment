@@ -10,6 +10,8 @@ import { TaskStatus } from '@tasks/enums';
 import { UserEntity } from '@users/entites/user.entity';
 import { NotificationEvents } from '@app/common';
 import { TasksService } from '@tasks/services/tasks.service';
+import { UserRolesEnum } from '@users/enums';
+import { RoleEntity } from '../../roles/entites/role.entity';
 
 const query: PaginateQuery = {} as unknown as PaginateQuery;
 
@@ -35,6 +37,9 @@ const task: TaskEntity = {
   title: 'Test Task',
   description: 'Task Description',
 } as unknown as TaskEntity;
+
+const user = new UserEntity();
+user.role = { name: UserRolesEnum.SUPER_ADMIN } as unknown as RoleEntity;
 
 describe('TasksService', () => {
   let tasksService: TasksService;
@@ -140,7 +145,7 @@ describe('TasksService', () => {
 
       mockTaskRepository.findOneAndUpdate.mockResolvedValue(updatedTask);
 
-      const result = await tasksService.updateOne(taskId, updateTaskDto);
+      const result = await tasksService.updateOne(taskId, updateTaskDto, user);
 
       expect(result).toEqual(updatedTask);
       expect(taskRepository.findOneAndUpdate).toHaveBeenCalledWith(
