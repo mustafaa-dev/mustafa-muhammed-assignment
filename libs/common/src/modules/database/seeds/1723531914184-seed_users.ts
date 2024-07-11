@@ -4,29 +4,53 @@ export class SeedUsers1723531914184 implements MigrationInterface {
   name = 'SeedUsers1723531914184';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    //super@otm.com Pa$$word10
+    //super@otm.com StrongPassword1020!@#
+    const superAdminRole = await queryRunner.query(`
+        SELECT "id"
+        FROM "roles"
+        WHERE "name" = 'super_admin';
+    `);
+    const adminRole = await queryRunner.query(`
+        SELECT "id"
+        FROM "roles"
+        WHERE "name" = 'admin';
+    `);
+    const leaderRole = await queryRunner.query(`
+        SELECT "id"
+        FROM "roles"
+        WHERE "name" = 'leader';
+    `);
+    const userRole = await queryRunner.query(`
+        SELECT "id"
+        FROM "roles"
+        WHERE "name" = 'user';
+    `);
+    const superAdminRoleId = superAdminRole[0].id;
+    const adminRoleId = adminRole[0].id;
+    const leaderRoleId = leaderRole[0].id;
+    const userRoleId = userRole[0].id;
     await queryRunner.query(`
         INSERT INTO "users" ("name", "email", "password", "role_id")
-        VALUES ('Mustafa_Super_Admin', 'super@otm.com', '$2a$10$mEw8iPk7WNvtudXPbb0kmubz3XNWN9KSkbTkRGd/USVlofNjXSCdq',
-                '1a3f6536-e689-4554-8887-c59872810ffa');
+        VALUES ('Mustafa_Super_Admin', 'super@otm.com', '$2a$10$inP.0cbn5HptJCahz2W2Kulc0o.Fz9IBTkmJFu3j4HL8THZlR4zKW',
+                '${superAdminRoleId}');
     `);
 
     await queryRunner.query(`
         INSERT INTO "users" ("name", "email", "password", "role_id")
-        VALUES ('Mustafa_Admin', 'admin@otm.com', '$2a$10$mEw8iPk7WNvtudXPbb0kmubz3XNWN9KSkbTkRGd/USVlofNjXSCdq',
-                '0ae51466-cbe3-471e-b12b-f2c7100ade93');
+        VALUES ('Mustafa_Admin', 'admin@otm.com', '$2a$10$inP.0cbn5HptJCahz2W2Kulc0o.Fz9IBTkmJFu3j4HL8THZlR4zKW',
+                '${adminRoleId}');
     `);
 
     await queryRunner.query(`
         INSERT INTO "users" ("name", "email", "password", "role_id")
-        VALUES ('Mustafa_Leader', 'leader@otm.com', '$2a$10$mEw8iPk7WNvtudXPbb0kmubz3XNWN9KSkbTkRGd/USVlofNjXSCdq',
-                '53be17ad-e1b7-4bbb-b74e-6aece2886ba0');
+        VALUES ('Mustafa_Leader', 'leader@otm.com', '$2a$10$inP.0cbn5HptJCahz2W2Kulc0o.Fz9IBTkmJFu3j4HL8THZlR4zKW',
+                '${leaderRoleId}');
     `);
 
     await queryRunner.query(`
         INSERT INTO "users" ("name", "email", "password", "role_id")
-        VALUES ('Mustafa_User', 'user@otm.com', '$2a$10$mEw8iPk7WNvtudXPbb0kmubz3XNWN9KSkbTkRGd/USVlofNjXSCdq',
-                'cb2cbdfb-b6fd-4bed-adb6-9d75f8d64065');
+        VALUES ('Mustafa_User', 'user@otm.com', '$2a$10$inP.0cbn5HptJCahz2W2Kulc0o.Fz9IBTkmJFu3j4HL8THZlR4zKW',
+                '${userRoleId}');
     `);
   }
 
