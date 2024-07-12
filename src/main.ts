@@ -6,7 +6,6 @@ import { ApiErrorFilter, LoggingInterceptor } from '@app/common';
 import { ValidationPipe } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import helmet from 'helmet';
 
 async function bootstrap() {
   try {
@@ -19,8 +18,8 @@ async function bootstrap() {
     app.useGlobalInterceptors(new LoggingInterceptor(loggerService));
     app.useGlobalFilters(new ApiErrorFilter(loggerService));
     app.useGlobalPipes(new ValidationPipe());
-    app.enableCors();
-    app.use(helmet());
+    // app.enableCors();
+    // app.use(helmet());
     // app.use(
     //   csp({
     //     directives: {
