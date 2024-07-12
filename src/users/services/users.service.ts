@@ -62,7 +62,6 @@ export class UsersService implements UsersServiceInterface {
       where: { email },
       relations: ['role'],
     });
-    console.log(password);
     if (await user.comparePassword(password)) return user;
   }
 

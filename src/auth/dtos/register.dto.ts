@@ -18,7 +18,7 @@ export class RegisterDto {
   email: string;
 
   @ApiProperty({
-    example: 'Pa$word10',
+    example: 'StrongPassword1020!@#',
     description: 'Password of the user, must be strong',
     type: String,
     required: true,
